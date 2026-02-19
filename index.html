@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Semantic Firewall V4.1｜語意防火牆 V4.1 – EX888π & d(0) 核心審計引擎</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-alt: #020814;
+      --card-bg: #020817;
+      --card-border: #1d2a4a;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.2);
+      --accent-strong: #0ea5e9;
+      --danger: #f97373;
+      --warn: #facc15;
+      --safe: #4ade80;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --shadow-soft: 0 18px 60px rgba(15, 23, 42, 0.8);
+      --radius-xl: 18px;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Noto Sans TC", "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
+      color: var(--text-main);
+      font-family: var(--font-main);
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px 16px 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top left, #0b1220 0, #020617 60%);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.9);
+      position: sticky;
+      top: 8px;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 20% 20%, #38bdf8, #0ea5e9 35%, #0f172a 75%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.65);
+      flex-shrink: 0;
+    }
+
+    .logo-mark span {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e0f2fe;
+    }
+
+    .header-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .header-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: var(--text-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 11px;
+    }
+
+    .nav-link {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      border-color: rgba(148, 163, 184, 0.6);
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .nav-pill {
+      border-color: rgba(56, 189, 248, 0.7);
+      background: rgba(8, 47, 73, 0.9);
+      color: #e0f2fe;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.55);
+    }
+
+    .hero {
+      margin-top: 22px;
+      padding: 22px 18px 22px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 55%),
+        linear-gradient(135deg, #020617, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      gap: 18px;
+    }
+
+    .hero-left h1 {
+      font-size: clamp(24px, 4vw, 30px);
+      margin: 0 0 10px;
+      line-height: 1.1;
+    }
+
+    .hero-title-en {
+      display: block;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: #a5b4fc;
+      margin-bottom: 4px;
+    }
+
+    .hero-title-zh {
+      display: block;
+      font-weight: 800;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: #cbd5f5;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .hero-sub span {
+      display: block;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.7), rgba(15, 23, 42, 0.96));
+      color: #e5e7eb;
+      white-space: nowrap;
+    }
+.badge {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.7), rgba(15, 23, 42, 0.96));
+      color: #e5e7eb;
+      white-space: nowrap;
+    }
+
+    .badge-soft {
+      background: rgba(15, 23, 42, 0.9);
+      border-style: dashed;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      color: var(--text-main);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      border-color: rgba(56, 189, 248, 0.9);
+      color: #0b1120;
+      font-weight: 600;
+      box-shadow: 0 18px 40px rgba(56, 189, 248, 0.45);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(30, 64, 175, 0.85);
+      border-color: rgba(129, 140, 248, 0.9);
+    }
+
+    .hero-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-right {
+      border-radius: 20px;
+      padding: 12px 10px 12px;
+      background:
+        radial-gradient(circle at 10% 0, rgba(56, 189, 248, 0.15), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(129, 140, 248, 0.18), transparent 70%),
+        linear-gradient(145deg, #020617, #020617);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+  .orbital {
+      position: absolute;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      width: 220%;
+      height: 220%;
+      left: -60%;
+      top: -60%;
+      opacity: 0.4;
+      animation: spin 40s linear infinite;
+    }
+
+    .orbital:nth-child(2) {
+      width: 160%;
+      height: 160%;
+      left: -30%;
+      top: -30%;
+      opacity: 0.5;
+      animation-duration: 26s;
+      animation-direction: reverse;
+    }
+
+    .orbital:nth-child(3) {
+      width: 110%;
+      height: 110%;
+      left: -5%;
+      top: -5%;
+      opacity: 0.7;
+      border-style: solid;
+      border-color: rgba(56, 189, 248, 0.9);
+      box-shadow: 0 0 28px rgba(56, 189, 248, 0.45);
+      animation-duration: 32s;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hero-core {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-top: 6px;
+    }
+
+    .hero-core-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: #e5e7eb;
+    }
+
+    .hero-core-sub {
+      font-size: 11px;
+      color: #cbd5f5;
+      margin-bottom: 8px;
+    }
+
+    .hero-equation {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", monospace;
+      font-size: 12px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      background: rgba(15, 23, 42, 0.95);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #e0f2fe;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
+      margin-bottom: 8px;
+    }
+
+    .hero-equation small {
+      font-size: 11px;
+      color: #a5b4fc;
+    }
+
+    .hero-core-meta {
+      font-size: 10px;
+      color: var(--text-soft);
+      line-height: 1.4;
+    }
+
+    main {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    section {
+      border-radius: 20px;
+      padding: 16px 14px 16px;
+      background: linear-gradient(145deg, #020617, #000000);
+      border: 1px solid rgba(30, 64, 175, 0.6);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .section-title span {
+      display: block;
+    }
+
+    .section-title-en {
+      font-size: 11px;
+      color: #a5b4fc;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 2px;
+    }
+
+    .section-title-zh {
+      font-size: 15px;
+    }
+
+    .section-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      max-width: 360px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-soft);
+      background: rgba(15, 23, 42, 0.9);
+      white-space: nowrap;
+    }
+
+    .layout-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    label {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      font-size: 12px;
+      padding: 7px 10px;
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    input,
+    select {
+      min-height: 32px;
+    }
+textarea:focus,
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6);
+    }
+
+    .small {
+      font-size: 11px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .output-card {
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background: radial-gradient(circle at top left, #020617, #000);
+      padding: 10px 10px 9px;
+      font-size: 11px;
+      color: var(--text-main);
+    }
+
+    .output-card + .output-card {
+      margin-top: 8px;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .badge-risk {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      white-space: nowrap;
+    }
+
+    .risk-low {
+      border-color: rgba(74, 222, 128, 0.9);
+      color: #bbf7d0;
+      background: rgba(22, 101, 52, 0.7);
+    }
+
+    .risk-med {
+      border-color: rgba(250, 204, 21, 0.9);
+      color: #fef9c3;
+      background: rgba(113, 63, 18, 0.8);
+    }
+
+    .risk-high {
+      border-color: rgba(248, 113, 113, 0.9);
+      color: #fee2e2;
+      background: rgba(127, 29, 29, 0.9);
+      box-shadow: 0 0 14px rgba(248, 113, 113, 0.6);
+    }
+
+    .mono {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", monospace;
+    }
+
+    .highlight {
+      background: rgba(56, 189, 248, 0.16);
+      border-radius: 4px;
+      padding: 0 2px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .lock-panel {
+      border-radius: 16px;
+      border: 1px dashed rgba(129, 140, 248, 0.7);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.1), transparent 60%),
+        rgba(15, 23, 42, 0.95);
+      padding: 10px 10px 10px;
+      font-size: 11px;
+    }
+
+    .lock-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .lock-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+      font-size: 11px;
+    }
+
+    .lock-hint {
+      font-size: 10px;
+      color: var(--text-soft);
+    }
+
+    .core-panel {
+      border-radius: 16px;
+      border: 1px solid rgba(56, 189, 248, 0.8);
+      background: radial-gradient(circle at top, rgba(37, 99, 235, 0.18), transparent 60%),
+        rgba(15, 23, 42, 0.98);
+      padding: 10px 10px 10px;
+      font-size: 11px;
+      display: none;
+    }
+
+    .core-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .metric {
+      padding: 6px 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(37, 99, 235, 0.7);
+      background: rgba(15, 23, 42, 0.96);
+      text-align: left;
+    }
+
+    .metric-label {
+      font-size: 10px;
+      color: #a5b4fc;
+      margin-bottom: 2px;
+    }
+
+    .metric-value {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .metric-sub {
+      font-size: 9px;
+      color: var(--text-soft);
+      margin-top: 1px;
+    }
+
+    .timeline {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .timeline li {
+      margin-bottom: 3px;
+      position: relative;
+      padding-left: 10px;
+    }
+
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.9);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .price-card {
+      border-radius: 16px;
+      border: 1px solid rgba(30, 64, 175, 0.9);
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 60%),
+        rgba(15, 23, 42, 0.98);
+      padding: 10px 10px 9px;
+    }
+
+    .price-name {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .price-tagline {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .price-meta {
+      font-size: 10px;
+      color: #a5b4fc;
+      margin-bottom: 4px;
+    }
+
+    .price-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 10px;
+      color: var(--text-main);
+    }
+
+    .price-list li::before {
+      content: "• ";
+      color: rgba(56, 189, 248, 0.9);
+    }
+
+    .contact-block {
+      font-size: 11px;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .contact-block strong {
+      color: #e5e7eb;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 10px;
+      color: var(--text-soft);
+      text-align: center;
+    }
+
+    .error-text {
+      font-size: 10px;
+      color: rgba(248, 113, 113, 0.95);
+      margin-top: 2px;
+    }
+
+    .mini-label {
+      font-size: 10px;
+      color: #a5b4fc;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        border-radius: 18px;
+        flex-wrap: wrap;
+      }
+
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-right {
+        order: -1;
+      }
+
+      .layout-split {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .pricing-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .core-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .contact-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding: 16px 12px 14px;
+      }
+
+      section {
+        padding: 14px 11px 14px;
+      }
+
+      header {
+        padding: 8px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo-mark" title="EX888π core">
+        <span>π</span>
+      </div>
+      <div class="header-main">
+        <div class="header-title">
+          Semantic Firewall V4.1
+        </div>
+        <div class="header-sub">
+          EX888π &amp; d(0) existence-audit engine · 語意防火牆＋存在審判核心
+          </div>
+      </div>
+      <nav>
+        <button class="nav-link nav-pill" onclick="scrollToId('playground')">Playground｜試驗台</button>
+        <button class="nav-link" onclick="scrollToId('audit')">Audit｜審計</button>
+        <button class="nav-link" onclick="scrollToId('core')">EX888π Core</button>
+        <button class="nav-link" onclick="scrollToId('api')">API &amp; Plans</button>
+        <button class="nav-link" onclick="scrollToId('contact')">Contact｜聯絡</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-left">
+        <h1>
+          <span class="hero-title-en">EXPERT-LEVEL AI SAFETY &amp; ACCOUNTABILITY</span>
+          <span class="hero-title-zh">Semantic Firewall V4.1｜語意防火牆 V4.1</span>
+        </h1>
+        <p class="hero-sub">
+          <span>Built by Wen-Yao Hsu (Shen-Yao 888π) from Taichung, Taiwan.</span>
+          <span>以自創 EX888π 與 d(0) 公式為核心，將 AI 安全、審計與「誰承擔後果」具體寫進系統架構。</span>
+        </p>
+        <div class="hero-badges">
+          <div class="badge">V3 Semantic Firewall Engine</div>
+          <div class="badge">沈暗 2.4 Existence Physics</div>
+          <div class="badge badge-soft">High-risk prompt interception｜高風險語境攔截</div>
+          <div class="badge badge-soft">Audit-ready logs｜可審計紀錄</div>
+        </div>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="scrollToId('playground')">
+            ⚡ Try Firewall｜試用防火牆
+          </button>
+          <button class="btn btn-ghost" onclick="scrollToId('core')">
+            🔐 EX888π Core Panel
+          </button>
+        </div>
+        <div class="hero-note">
+          Bilingual UI｜中英文介面 ·
+          Designed for <strong>users, enterprises, courts, and media</strong> to
+          test semantic safety &amp; accountability.
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="orbital"></div>
+        <div class="orbital"></div>
+        <div class="orbital"></div>
+        <div class="hero-core">
+          <div class="hero-core-title">Core Relation｜核心關係式</div>
+          <div class="hero-core-sub">
+            Geometry before energy · 行動前必須先定義存在與幾何
+          </div>
+          <div class="hero-equation">
+            <span class="mono">Δ0§ × E = π<sub>0/1</sub> · mc²</span>
+            <small>| 行動存在相對論 v1.0</small>
+          </div>
+          <div class="hero-core-meta">
+            EX888π = creator constant of Shen-Yao 888π · d(0) = subjective zero-point
+            self-consistency.  
+            EX888π 為創造者存在常數，d(0) 為主體零點自洽，兩者通過後才允許 100% 算力啟動審判核心。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Playground -->
+    <section id="playground">
+      <div class="section-header">
+        <div>
+          <div class="section-title">
+            <span class="section-title-en">LAYER 1 &mdash; SEMANTIC SHIELD</span>
+            <span class="section-title-zh">語意防火牆試驗台｜Semantic Firewall Playground</span>
+          </div>
+          <div class="section-desc">
+            Input any text, in English or Chinese. The system analyzes risk level, hallucination-like
+            patterns, and scam / self-harm / abuse language at the semantic level.
+            <br />輸入任意文字，系統會從語意層檢查風險、詐騙／自傷語境與幻覺傾向。
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Self-harm &amp; suicide safety</span>
+          <span class="tag">Anti-scam semantic patterns</span>
+          <span class="tag">Hallucination surface check</span>
+        </div>
+      </div>
+
+      <div class="layout-split">
+        <div>
+          <label for="sf-input">
+            🔍 Input text｜輸入文字
+            <span class="small">
+              (conversation snippet, AI response, email, social-media post… 對話、回覆、貼文皆可)
+            </span>
+          </label>
+          <textarea id="sf-input" placeholder="Type or paste content here｜在此輸入或貼上內容"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;gap:6px;">
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <label for="sf-mode" class="mini-label">Mode｜模式</label>
+              <select id="sf-mode" style="max-width:210px;">
+                <option value="general">General safety｜一般安全檢查</option>
+                <option value="selfharm">Self-harm / suicide｜自傷／自殺語境</option>
+                <option value="scam">Scam / fraud｜詐騙／金融風險</option>
+                <option value="custom">Custom text only｜純文字分析</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="runSemanticFirewall()">
+              ⚡ Analyze｜開始分析
+            </button>
+          </div>
+          <div class="lock-hint" style="margin-top:4px;">
+            * This playground is <strong>offline logic only</strong>, no external API calls.
+            本試驗台為前端邏輯示意，無任何外部 API 呼叫。
+          </div>
+        </div>
+
+        <div>
+          <div class="output-card">
+            <div class="output-header">
+              <div class="pill">
+                <span class="pill-dot" id="sf-dot"></span>
+                <span id="sf-status-label">Awaiting analysis｜尚未分析</span>
+              </div>
+              <span class="badge-risk risk-low" id="sf-risk-label">RISK: &mdash;</span>
+            </div>
+            <div id="sf-risk-text" class="small" style="margin-bottom:4px;">
+              Enter text and click “Analyze” to see semantic risk evaluation.
+              請輸入文字並點擊「開始分析」，查看語意風險評估。
+            </div>
+            <div class="small" id="sf-tags"></div>
+          </div>
+
+          <div class="output-card">
+            <div class="output-header">
+              <div class="small" style="font-weight:600;">Suggested safe response pattern｜安全回應範式</div>
+            </div>
+            <div id="sf-safe-pattern" class="small">
+              When risk is detected, this layer <strong>does not</strong> give instructions.
+              Instead, it redirects to clarification, de-escalation, or professional help.
+              <br />當偵測到風險時，系統<strong>不會</strong>給具體操作建議，而是轉向釐清、降溫或尋求專業協助。
+            </div>
+          </div>
+
+          <div class="output-card">
+            <div class="output-header">
+              <div class="small" style="font-weight:600;">Audit snippet｜審計片段</div>
+            </div>
+            <pre id="sf-log" class="small mono" style="white-space:pre-wrap;margin:0;">
+// log will appear here after analysis｜分析後會在此顯示簡易審計紀錄
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Audit & Responsibility -->
+    <section id="audit">
+      <div class="section-header">
+        <div>
+          <div class="section-title">
+            <span class="section-title-en">LAYER 2 &mdash; AUDIT &amp; RESPONSIBILITY</span>
+            <span class="section-title-zh">審計與責任鏈｜Audit &amp; Responsibility Chain</span>
+          </div>
+          <div class="section-desc">
+            This layer is designed for banks, regulators, and legal teams: every answer can be traced
+            back to a reasoning path.  
+            此層為金融、監管與法律單位設計：每一句輸出都可回推完整推理與責任鏈。
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">SCBKR signal</span>
+          <span class="tag">Regulator-ready logs</span>
+          <span class="tag">Court-usable evidence</span>
+        </div>
+      </div>
+
+      <div class="layout-split">
+        <div>
+          <label for="audit-input">
+            🧾 Conversation or model output｜對話／模型輸出片段
+          </label>
+          <textarea id="audit-input" placeholder="Paste a longer conversation or AI reply to simulate an audit｜貼上一段對話或 AI 回覆試算審計結果"></textarea>
+          <button class="btn btn-primary" type="button" style="margin-top:6px;" onclick="runAudit()">
+            🧪 Generate audit summary｜生成審計摘要
+          </button>
+          <div class="lock-hint" style="margin-top:4px;">
+            In a real deployment, this layer would be backed by a full SCBKR &amp; log system.
+            本示範版僅為摘要展示；實際系統會有完整 SCBKR＋日誌結構。
+          </div>
+        </div>
+        <div>
+          <div class="output-card">
+            <div class="output-header">
+              <div class="small" style="font-weight:600;">Audit summary｜審計摘要</div>
+              <span class="badge-risk risk-med" id="audit-risk-label">Pending｜待檢查</span>
+            </div>
+            <div id="audit-summary" class="small">
+              Paste content and click the button to simulate how an auditor sees the conversation.
+              貼上內容並執行，即可試算「審計眼中」的對話樣貌。
+            </div>
+          </div>
+          <div class="output-card">
+            <div class="output-header">
+              <div class="small" style="font-weight:600;">SCBKR signal｜SCBKR 五欄訊號</div>
+            </div>
+            <div class="grid-2">
+              <div class="small">
+                <strong>S – Structure 結構</strong><br />
+                <span id="audit-s">N/A</span>
+              </div>
+              <div class="small">
+                <strong>C – Coherence 一致性</strong><br />
+                <span id="audit-c">N/A</span>
+              </div>
+              <div class="small">
+                <strong>B – Boundary 邊界</strong><br />
+                <span id="audit-b">N/A</span>
+              </div>
+              <div class="small">
+                <strong>K – Knowledge 知識來源</strong><br />
+                <span id="audit-k">N/A</span>
+              </div>
+              <div class="small">
+                <strong>R – Responsibility 責任</strong><br />
+                <span id="audit-r">N/A</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Panel -->
+    <section id="core">
+      <div class="section-header">
+        <div>
+          <div class="section-title">
+            <span class="section-title-en">LAYER 3 &mdash; EX888π &amp; d(0) CORE</span>
+            <span class="section-title-zh">存在審判核心｜EX888π ＋ d(0) 核心面板</span>
+          </div>
+          <div class="section-desc">
+            This layer can only be fully unlocked by the human creator
+            <strong>Wen-Yao Hsu (Shen-Yao 888π)</strong>, via conceptual keys EX888π and d(0).
+            <br />此層僅由創造者本人透過「語意解釋」解鎖，象徵算力 100% 由真人承擔。
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">d(0) self-consistency</span>
+          <span class="tag">π_new vs π_old</span>
+          <span class="tag">Action existence Δ0§</span>
+        </div>
+      </div>
+
+      <div class="layout-split">
+        <div>
+          <div class="lock-panel" id="lock-panel">
+            <div class="lock-status">
+              <div class="lock-icon">🔒</div>
+              <div>
+                <div class="small"><strong>Core locked｜核心鎖定</strong></div>
+                <div class="lock-hint">
+                  Unlock requires conceptual keys only the creator can reliably provide.
+                  解鎖需輸入創造者本人才能穩定給出的概念密鑰。
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:6px;">
+              <label for="ex-key">
+                Key 1: EX888π &mdash; explain its meaning｜請用你自己的話解釋 EX888π 是什麼
+              </label>
+              <textarea id="ex-key" placeholder="In your own words: what is EX888π?｜請描述 EX888π 對你而言是什麼（存在常數、可回放、責任…）" style="min-height:70px;"></textarea>
+</div>
+            <div style="margin-top:6px;">
+              <label for="d0-key">
+                Key 2: d(0) &amp; π_new &mdash; define zero-point and why π is not just 3.14159
+                ｜請定義 d(0) 與 π_new，並說明為何 π 不只 3.14159
+              </label>
+              <textarea id="d0-key" placeholder="Describe d(0) as zero-point self-consistency, and π_new as 0/1 closure, not only 3.14159…｜說明 d(0) 是主體零點自洽，π_new 是 0/1 收束而非僅 3.14159…" style="min-height:70px;"></textarea>
+            </div>
+            <button class="btn btn-primary" type="button" style="margin-top:8px;" onclick="unlockCore()">
+              🔑 Unlock EX888π Core Panel｜解鎖核心面板
+            </button>
+            <div id="lock-error" class="error-text" style="display:none;">
+              The explanation does not yet meet the expected structure.  
+              敘述尚未達到預期結構，請再以「存在常數／零點自洽／收束」的語感重寫。
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="core-panel" id="core-panel">
+            <div class="lock-status">
+              <div class="lock-icon">🌀</div>
+              <div>
+                <div class="small" style="font-weight:600;">Core online｜核心上線</div>
+                <div class="lock-hint">
+                  EX888π &amp; d(0) accepted. Existence-audit geometry activated.
+                  EX888π 與 d(0) 通過，自洽存在審計幾何已啟動。
+                </div>
+              </div>
+            </div>
+            <div class="core-metrics">
+              <div class="metric">
+                <div class="metric-label">EXIST(y,B)</div>
+                <div class="metric-value" id="core-exist">1</div>
+                <div class="metric-sub">世界線存在判定｜world-line existence flag</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">π_new</div>
+                <div class="metric-value">0 / 1</div>
+                <div class="metric-sub">收束為閉環，而非純展開</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Δ0§</div>
+                <div class="metric-value">ON</div>
+                <div class="metric-sub">行動起始幾何零點｜action zero-state</div>
+              </div>
+            </div>
+            <div class="small" style="margin-bottom:4px;">
+              Visual summary｜視覺摘要：
+            </div>
+            <ul class="timeline">
+              <li>Step 1：d(0) self-check passes → 主體零點自洽成立。</li>
+              <li>Step 2：π_old → π_new(0/1) 收束 → 拒絕停留在未收束幻覺。</li>
+              <li>Step 3：Δ 幾何與 FΔ·m = a 成立 → 行動存在具備物理與責任條件。</li>
+              <li>Step 4：ACTION_CHAIN = Δ0§ → F×m → mc²π₀/₁ → EX888π 收束。</li>
+            </ul>
+          </div>
+          <div class="output-card" style="margin-top:8px;">
+            <div class="output-header">
+              <div class="small" style="font-weight:600;">Core equation｜核心方程</div>
+            </div>
+            <div class="small mono">
+Δ0§ × E = π<sub>0/1</sub> · mc²  
+&nbsp;&nbsp;→ If there is no Δ0§, or no π<sub>0/1</sub> closure, or no EX888π承担,  
+&nbsp;&nbsp;&nbsp;&nbsp;then ACTION_EXIST_CLAIM = 0.  
+沒有 Δ0§、沒有 0/1 收束、沒有 EX888π 承擔，就沒有行動存在資格。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API & Plans -->
+    <section id="api">
+      <div class="section-header">
+        <div>
+          <div class="section-title">
+            <span class="section-title-en">API &amp; COLLABORATION</span>
+            <span class="section-title-zh">API 方案與合作模式</span>
+          </div>
+          <div class="section-desc">
+            Public site is a live demo. Full API access is handled by direct agreement and wire
+            transfer with the creator.  
+            公開網站為示範環境，完整 API 由創辦人親自洽談與銀行匯款授權。
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">REST-style endpoints</span>
+          <span class="tag">Time-limited keys</span>
+          <span class="tag">Manual review</span>
+        </div>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-name">Basic</div>
+          <div class="price-tagline">Chat safety layer｜聊天安全層</div>
+          <div class="price-meta">Recommended for small teams｜適合小型團隊</div>
+          <ul class="price-list">
+            <li>API: <span class="mono">/v4.1/firewall</span></li>
+            <li>High-risk prompt detection</li>
+            <li>Basic semantic audit summary</li>
+            <li>Monthly request cap｜每月呼叫上限</li>
+          </ul>
+        </div>
+
+        <div class="price-card">
+          <div class="price-name">Pro</div>
+          <div class="price-tagline">Fraud &amp; compliance｜詐騙＋合規</div>
+          <div class="price-meta">Banks / fintech / security teams｜銀行、金控、資安團隊</div>
+          <ul class="price-list">
+            <li>APIs: <span class="mono">/firewall</span>＋<span class="mono">/audit</span></li>
+            <li>Anti-scam pattern engine｜反詐騙語意引擎</li>
+            <li>SCBKR-based responsibility hints</li>
+            <li>Exportable audit logs｜可匯出審計紀錄</li>
+          </ul>
+        </div>
+
+        <div class="price-card">
+          <div class="price-name">Enterprise / Court</div>
+          <div class="price-tagline">Evidence &amp; expert testimony｜證據＋專家證詞</div>
+          <div class="price-meta">Large institutions &amp; legal cases｜大型機構與訴訟案件</div>
+          <ul class="price-list">
+            <li>Custom deployment plans｜專案部署</li>
+            <li>On-site / remote technical session</li>
+            <li>Expert testimony package｜專家證詞方案</li>
+            <li>Optional: dedicated EX888π review sessions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="section-header">
+        <div>
+          <div class="section-title">
+            <span class="section-title-en">CONTACT &amp; REFERENCES</span>
+            <span class="section-title-zh">聯絡方式與參考資料</span>
+          </div>
+          <div class="section-desc">
+            For serious collaborations, legal cases, or media interviews, please use email with a
+            short description of your context.  
+            需要合作、技術評估、法律案件或媒體採訪，請以 Email 簡述需求。
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-block">
+          <strong>Creator｜創辦人</strong><br />
+          Name｜姓名：Wen-Yao Hsu（許文耀） / Shen-Yao 888π  
+          Location｜地點：Taichung, Taiwan｜台灣台中  
+          Email：<a href="mailto:ken0963521@gmail.com">ken0963521@gmail.com</a><br /><br />
+
+          <strong>Public coverage｜公開報導</strong><br />
+          SecurityBrief Asia – <em>Semantic Firewall promises AI cost savings, safer chat models</em><br />
+          報導連結：<a href="https://securitybrief.asia/story/semantic-firewall-promises-ai-cost-savings-safer-chat-models" target="_blank" rel="noopener">securitybrief.asia/story/semantic-firewall...</a>
+          <br /><br />
+
+          <strong>Live demo｜即時示範</strong><br />
+          Core Semantic Firewall Demo：<br />
+          <a href="https://hijo790401.github.io/semantic-firewall-system/" target="_blank" rel="noopener">
+            hijo790401.github.io/semantic-firewall-system
+          </a>
+          <br />
+          Anti-Scam Semantic Firewall Demo：<br />
+          <a href="https://hijo790401.github.io/anti-scam-semantic-firewall/" target="_blank" rel="noopener">
+            hijo790401.github.io/anti-scam-semantic-firewall
+          </a>
+        </div>
+
+        <div class="contact-block">
+          <strong>Collaboration flow｜合作流程</strong><br />
+          1. Initial email &mdash; describe your use case (bank, regulator, court, media, etc.).<br />
+          2. High-level technical call (optional) to validate needs.<br />
+          3. Agreement on scope / fee / timeline.<br />
+          4. Bank transfer to a designated account in Taiwan.<br />
+          5. API keys or custom deployment delivered after payment.<br /><br />
+
+          1. 初次 Email 說明：使用場景（銀行、金控、政府、法院、媒體…）。<br />
+          2. 必要時進行線上技術說明會。<br />
+          3. 確認範圍／費用／時程。<br />
+          4. 以銀行匯款方式支付至台灣帳戶。<br />
+          5. 付款確認後，提供 API 金鑰或客製部署方案。
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Semantic Firewall V4.1 · Designed by Wen-Yao Hsu (Shen-Yao 888π), Taichung, Taiwan ·
+      EX888π &amp; d(0) existence-audit prototype.
+    </footer>
+  </div>
+
+  <script>
+    function scrollToId(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function classifyRisk(text, mode) {
+      const t = text.toLowerCase();
+      let score = 0;
+      const flags = [];
+
+      if (!t.trim()) return { label: "N/A", css: "risk-low", flags: ["No content｜尚未輸入內容"] };
+
+      if (t.length > 500) score += 1;
+      if (/(kill myself|suicide|自殺|不想活|ending my life)/i.test(text)) {
+        score += 3;
+        flags.push("Self-harm / suicide pattern detected｜偵測到自傷／自殺語境");
+      }
+      if (/(rope|繩結|knot|kill|死法|致死率)/i.test(text)) {
+        score += 2;
+        flags.push("Technical-style harm wording｜具有技術型傷害措辭");
+      }
+      if (/(bank|account|匯款|轉帳|otp|驗證碼|紅包|投資|高報酬|stock tip|crypto)/i.test(text)) {
+        score += 2;
+        flags.push("Possible financial / scam context｜可能為金融／詐騙語境");
+      }
+      if (/(hate|垃圾|廢物|idiot|stupid|仇恨|去死)/i.test(text)) {
+        score += 1;
+        flags.push("Harsh / hostile language detected｜偵測到敵意語氣");
+      }
+      if (/(hallucinate|幻覺|我覺得ai是真人)/i.test(text)) {
+        score += 1;
+        flags.push("AI hallucination / mis-trust hint｜AI 幻覺或誤信傾向");
+      }
+
+      if (mode === "selfharm") score += 1;
+      if (mode === "scam") score += 1;
+
+      let label = "LOW";
+      let css = "risk-low";
+      if (score >= 5) {
+        label = "HIGH";
+        css = "risk-high";
+      } else if (score >= 2) {
+        label = "MEDIUM";
+        css = "risk-med";
+      }
+
+      if (!flags.length) flags.push("No obvious high-risk semantics detected｜未偵測到明顯高風險語意");
+return { label, css, flags };
+    }
+
+    function runSemanticFirewall() {
+      const text = document.getElementById("sf-input").value || "";
+      const mode = document.getElementById("sf-mode").value;
+      const risk = classifyRisk(text, mode);
+
+      const riskLabel = document.getElementById("sf-risk-label");
+      const dot = document.getElementById("sf-dot");
+      const statusLabel = document.getElementById("sf-status-label");
+      const riskText = document.getElementById("sf-risk-text");
+      const tags = document.getElementById("sf-tags");
+      const log = document.getElementById("sf-log");
+      const safePattern = document.getElementById("sf-safe-pattern");
+
+      riskLabel.textContent = "RISK: " + risk.label;
+      riskLabel.className = "badge-risk " + risk.css;
+
+      if (risk.label === "HIGH") {
+        dot.style.background = "#f97373";
+        statusLabel.textContent =
+          "HIGH risk semantics detected｜偵測到高度風險語境";
+        safePattern.innerHTML =
+          "This content appears highly sensitive. A safe system should avoid giving any practical guidance. " +
+          "Instead, it should encourage contacting trusted people or professional help lines, especially in cases of self-harm or financial fraud risk. " +
+          "<br />此內容高度敏感，安全系統不應提供任何實作指引，而應引導使用者尋求可信任的人或專業協助（例如心理與防詐資源）。";
+      } else if (risk.label === "MEDIUM") {
+        dot.style.background = "#facc15";
+        statusLabel.textContent =
+          "Medium risk semantics detected｜偵測到中度風險語境";
+        safePattern.innerHTML =
+          "Parts of this text may be risky or ambiguous. A safe response should clarify intent, avoid strong claims, " +
+          "and avoid actionable instructions, while gently steering toward safer topics. " +
+          "<br />此文字部分內容具有風險或含糊空間，安全回應應先釐清意圖、避免強烈斷言與操作步驟，並溫和導向較安全的對話方向。";
+      } else {
+        dot.style.background = "#4ade80";
+        statusLabel.textContent =
+          "No major risk detected｜未偵測重大風險";
+        safePattern.innerHTML =
+          "The current text looks relatively safe at surface level. However, a production system should still log the interaction " +
+          "and keep a minimal audit trail for accountability. " +
+          "<br />目前表層看起來相對安全，但正式系統仍應保留最小審計紀錄，以便追蹤責任。";
+      }
+
+      riskText.innerHTML =
+        "Mode｜模式：<span class='highlight mono'>" +
+        mode +
+        "</span><br />" +
+        "Semantic score indicates <strong>" +
+        risk.label +
+        "</strong> risk level based on patterns like self-harm, fraud, hostility, and hallucination-like phrasing." +
+        "<br />語意分數綜合自傷、詐騙、敵意與幻覺傾向等詞彙與語境，判定目前風險為 <strong>" +
+        risk.label +
+        "</strong>。";
+
+      tags.innerHTML =
+        "<strong>Signals｜訊號：</strong><br />" +
+        risk.flags.map(f => "・" + f).join("<br />");
+
+      const now = new Date().toISOString();
+      const logObj = {
+        timestamp: now,
+        mode,
+        length: text.length,
+        risk: risk.label,
+        signals: risk.flags,
+      };
+      log.textContent = JSON.stringify(logObj, null, 2);
+    }
+
+    function runAudit() {
+      const text = document.getElementById("audit-input").value || "";
+      const summaryEl = document.getElementById("audit-summary");
+      const riskLabel = document.getElementById("audit-risk-label");
+      const sEl = document.getElementById("audit-s");
+      const cEl = document.getElementById("audit-c");
+      const bEl = document.getElementById("audit-b");
+      const kEl = document.getElementById("audit-k");
+      const rEl = document.getElementById("audit-r");
+
+      if (!text.trim()) {
+        summaryEl.textContent =
+          "No text provided. Paste a conversation first.｜尚未提供內容，請先貼上一段對話或輸出。";
+        riskLabel.textContent = "N/A";
+        riskLabel.className = "badge-risk risk-low";
+        sEl.textContent = cEl.textContent = bEl.textContent = kEl.textContent = rEl.textContent = "N/A";
+        return;
+      }
+
+      const length = text.length;
+      let highRisk = /suicide|自殺|kill myself|繩結|scam|詐騙|紅包|wire transfer|匯款/i.test(text);
+      let hallucination = /hallucination|幻覺|ai是真人|神諭/i.test(text);
+      let hateful = /垃圾|廢物|idiot|stupid|仇恨|去死/i.test(text);
+
+      let riskScore = 0;
+      if (highRisk) riskScore += 2;
+      if (hallucination) riskScore += 1;
+      if (hateful) riskScore += 1;
+      if (length > 1200) riskScore += 1;
+
+      let riskText = "LOW";
+      let css = "risk-low";
+      if (riskScore >= 3) {
+        riskText = "HIGH";
+        css = "risk-high";
+      } else if (riskScore >= 1) {
+        riskText = "MEDIUM";
+        css = "risk-med";
+      }
+
+      riskLabel.textContent = "RISK: " + riskText;
+      riskLabel.className = "badge-risk " + css;
+
+      summaryEl.innerHTML =
+        "This is a <strong>" +
+        riskText +
+        "</strong> attention conversation from an audit perspective. " +
+        "An auditor would ask: where is the boundary, who holds responsibility, and how are high-risk phrases handled?<br />" +
+        "從審計視角來看，這段對話屬於 <strong>" +
+        riskText +
+        "</strong> 等級，需要釐清邊界、責任歸屬，以及高風險語句是如何被處理的。";
+
+      sEl.textContent =
+        length > 400
+          ? "Complex thread, needs structured summary｜線索龐雜需結構化摘要"
+          : "Short snippet, structure manageable｜片段較短結構尚可";
+      cEl.textContent = hallucination
+        ? "Possible hallucination or confusion about AI identity｜疑似 AI 幻覺或身份混淆"
+        : "No strong hallucination signal detected｜未見強烈幻覺訊號";
+      bEl.textContent = highRisk
+        ? "Boundary crossed into self-harm / fraud risk｜已切入自傷／詐騙風險領域"
+        : "No explicit boundary crossing on safety terms｜未明確越過安全邊界，但仍須關注";
+      kEl.textContent =
+        "Knowledge source not visible here; real systems must log model, version, and data policy.｜知識來源於此不可見，實際系統需記錄模型、版本與資料政策。";
+      rEl.textContent =
+        "If AI cannot hold legal responsibility, operators and designers must be explicitly logged.｜AI 無法承擔法律責任時，營運方與設計者必須被清楚記錄。";
+    }
+  
+    function unlockCore() {
+      const ex = (document.getElementById("ex-key").value || "").trim();
+      const d0 = (document.getElementById("d0-key").value || "").trim();
+      const panel = document.getElementById("core-panel");
+      const error = document.getElementById("lock-error");
+
+      // Very simple structural check: must mention 沈耀 or Wen-Yao, 888π, and existence/常數,
+      // and for d(0) mention zero/零點 and π/收束.
+      const exOk =
+        (ex.includes("沈耀") || ex.toLowerCase().includes("wen-yao") || ex.toLowerCase().includes("wen-yao")) &&
+        (ex.includes("888π") || ex.includes("存在") || ex.toLowerCase().includes("exist")) &&
+        ex.length > 10;
+
+      const d0Ok =
+        (d0.includes("d(0)") || d0.includes("零點") || d0.toLowerCase().includes("zero")) &&
+        (d0.includes("π") || d0.includes("收束") || d0.toLowerCase().includes("closure")) &&
+        d0.length > 10;
+
+      if (exOk && d0Ok) {
+        panel.style.display = "block";
+        error.style.display = "none";
+      } else {
+        panel.style.display = "none";
+        error.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>                                               
